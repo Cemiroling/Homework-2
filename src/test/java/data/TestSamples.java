@@ -6,8 +6,7 @@ import domain.OrderItem;
 public class TestSamples {
     public static Order getTestOrder() {
         OrderItem[] orderItems = {
-                new OrderItem("firstId", "firstName", 2, 20),
-                new OrderItem("secondId", "secondName", 3, 30)
+                getValidOrderItem()
         };
         Order order = new Order("testUserId", orderItems, "Test st.");
         return order;

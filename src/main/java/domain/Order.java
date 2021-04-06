@@ -6,17 +6,15 @@ public class Order {
 
     private String id;
 
+    private OrderStatus orderStatus;
+
     private final String userId;
 
     private Date orderDate;
 
-    private OrderStatus orderStatus;
-
-    private final OrderItem[] orderItems;
+    private OrderItem[] orderItems;
 
     private final String address;
-
-    private int cost;
 
     public Order(String userId, OrderItem[] orderItems, String address) {
         this.userId = userId;
@@ -48,6 +46,10 @@ public class Order {
         return orderItems;
     }
 
+    public void setOrderItems(OrderItem[] orderItems) {
+        this.orderItems = orderItems;
+    }
+
     public Date getOrderDate() {
         return orderDate;
     }
@@ -61,10 +63,10 @@ public class Order {
     }
 
     public int getCost() {
+        int cost = 0;
+        for (OrderItem orderItem : getOrderItems()) {
+            cost += orderItem.getCost() * orderItem.getAmount();
+        }
         return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 }

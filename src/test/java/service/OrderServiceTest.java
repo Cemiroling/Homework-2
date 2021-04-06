@@ -5,9 +5,13 @@ import domain.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import persistence.OrderItemStorage;
 import persistence.OrderStorage;
 
+import java.util.Date;
 import java.util.UUID;
 
 import static data.TestSamples.getTestOrder;
@@ -28,24 +32,31 @@ class OrderServiceTest {
     @Mock
     private OrderStorage orderStorage;
 
+    @Mock
+    private OrderItemStorage orderItemStorage;
+
     @BeforeEach
     public void before() {
         MockitoAnnotations.initMocks(this);
         when(orderStorage.persist(any())).thenReturn(UUID.randomUUID().toString());
-        orderService = new OrderService(orderStorage, orderValidator);
+        orderService = new OrderService(orderStorage, orderItemStorage, orderValidator);
     }
 
     @Test
     void createOrder() {
         Order order = getTestOrder();
+        Order orderSpy = Mockito.spy(order);
 
-        when(orderValidator.validate(order)).thenReturn(true);
+        when(orderValidator.validate(orderSpy)).thenReturn(true);
 
-        final String id = orderService.placeOrder(order);
+        final String id = orderService.placeOrder(orderSpy);
         assertThat(id, is(notNullValue()));
 
-        verify(orderStorage).persist(order);
-        assertThat(order.getOrderStatus(), is(OrderStatus.WAITING));
+        verify(orderStorage).persist(orderSpy);
+        verify(orderSpy).setOrderDate(any());
+        verify(orderItemStorage).persistOrderItems(orderSpy);
+
+        assertThat(orderSpy.getOrderStatus(), is(OrderStatus.WAITING));
     }
 
     @Test

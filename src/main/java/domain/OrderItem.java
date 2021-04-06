@@ -2,13 +2,15 @@ package domain;
 
 public class OrderItem {
 
+    private String orderId;
+
     private final String id;
 
-    private String name;
+    private final String name;
 
-    private int amount;
+    private final int amount;
 
-    private int cost;
+    private final int cost;
 
     public OrderItem(String id, String name, int amount, int cost) {
         this.id = id;
@@ -17,27 +19,19 @@ public class OrderItem {
         this.cost = cost;
     }
 
-    public String getName() {
-        return name;
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
     public int getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
     public int getCost() {
         return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 }

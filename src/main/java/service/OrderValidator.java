@@ -7,12 +7,15 @@ public class OrderValidator {
         if (order.getUserId() == null) {
             return false;
         }
+
         if (order.getOrderItems() == null) {
             return false;
         }
+
         if (order.getAddress() == null) {
             return false;
         }
+
         return true;
     }
 }

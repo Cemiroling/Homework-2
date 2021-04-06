@@ -1,21 +1,24 @@
 package service;
 
 import domain.Order;
+import domain.OrderItem;
 import domain.OrderStatus;
+import persistence.OrderItemStorage;
 import persistence.OrderStorage;
 
 import java.util.Date;
-
-import static domain.OrderUtils.getOrderCost;
 
 public class OrderService {
 
     private final OrderStorage orderStorage;
 
+    private final OrderItemStorage orderItemStorage;
+
     private final OrderValidator orderValidator;
 
-    public OrderService(OrderStorage orderStorage, OrderValidator orderValidator) {
+    public OrderService(OrderStorage orderStorage, OrderItemStorage orderItemStorage, OrderValidator orderValidator) {
         this.orderStorage = orderStorage;
+        this.orderItemStorage = orderItemStorage;
         this.orderValidator = orderValidator;
     }
 
@@ -28,11 +31,9 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.WAITING);
         order.setOrderDate(new Date());
 
-        int orderCost = getOrderCost(order);
-        order.setCost(orderCost);
-
         final String id = orderStorage.persist(order);
         order.setId(id);
+        orderItemStorage.persistOrderItems(order);
 
         return id;
     }
@@ -42,6 +43,12 @@ public class OrderService {
             throw new IllegalArgumentException("Id cannot be null");
         }
         Order[] orders = orderStorage.loadByUserId(userId);
+
+        for (Order order : orders) {
+            OrderItem[] orderItems = orderItemStorage.loadByOrderId(order.getId());
+            order.setOrderItems(orderItems);
+        }
+
         return orders;
     }
 }
